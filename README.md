@@ -8,9 +8,7 @@ import cv2
 
 from tactics_drawer.utils import TacticsDrawer
 
-img = cv2.imread("pitch.png")
-
-painter = TacticsDrawer(img)
+painter = TacticsDrawer(cv2.imread("pitch.png"))
 
 painter.draw_arrow((100, 100), (200, 150), color="green")
 painter.draw_filled_circle((50, 50), radius=12, color="red")
