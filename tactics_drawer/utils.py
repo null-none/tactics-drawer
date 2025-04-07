@@ -1,4 +1,5 @@
 import cv2
+import math
 
 
 class TacticsDrawer:
@@ -27,24 +28,39 @@ class TacticsDrawer:
         """
         return self.colors.get(color.lower(), self.colors["green"])
 
-    def draw_arrow(self, pt1, pt2, color="green", thickness=2, tip_length=0.2):
+    def draw_arrow(self, pt1, pt2, color="green", thickness=2, head_size=10):
         """
-        Draw an arrow from pt1 to pt2.
+        Draw an arrow with a consistent arrowhead size regardless of line length.
 
-        :param pt1: Starting point (x, y)
-        :param pt2: Ending point (x, y)
-        :param color: "red" or "green"
-        :param thickness: Arrow line thickness
-        :param tip_length: Arrowhead size (0.0 to 1.0)
+        :param pt1: Start point (x, y)
+        :param pt2: End point (x, y)
+        :param color: 'red' or 'green'
+        :param thickness: Line thickness
+        :param head_size: Length of arrowhead sides (default: 10)
         """
-        cv2.arrowedLine(
-            self.image,
-            pt1,
-            pt2,
-            self._get_color(color),
-            thickness,
-            tipLength=tip_length,
+        color_bgr = self._get_color(color)
+
+        # Draw main line
+        cv2.line(self.image, pt1, pt2, color_bgr, thickness)
+
+        # Compute angle of the line
+        dx = pt2[0] - pt1[0]
+        dy = pt2[1] - pt1[1]
+        angle = math.atan2(dy, dx)
+
+        # Arrowhead points (two lines forming a "V")
+        left = (
+            int(pt2[0] - head_size * math.cos(angle - math.pi / 6)),
+            int(pt2[1] - head_size * math.sin(angle - math.pi / 6))
         )
+        right = (
+            int(pt2[0] - head_size * math.cos(angle + math.pi / 6)),
+            int(pt2[1] - head_size * math.sin(angle + math.pi / 6))
+        )
+
+        # Draw arrowhead "wings"
+        cv2.line(self.image, pt2, left, color_bgr, thickness)
+        cv2.line(self.image, pt2, right, color_bgr, thickness)
 
     def draw_circle(self, center, radius=5, color="red", thickness=2):
         """
