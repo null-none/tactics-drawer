@@ -16,25 +16,25 @@ class TacticsDrawer:
             )
         self.image = image.copy()
 
-        # Only two allowed colors: red and green
-        self.colors = {"red": (0, 0, 255), "green": (0, 255, 0)}
+        # Only two allowed colors: red and black
+        self.colors = {"red": (0, 0, 255), "black": (0, 0, 0), "blue": (255, 0, 0)}
 
     def _get_color(self, color):
         """
-        Convert color name to BGR. Default is green if invalid.
+        Convert color name to BGR. Default is black if invalid.
 
-        :param color: "red" or "green"
+        :param color: "red" or "black"
         :return: BGR color tuple
         """
-        return self.colors.get(color.lower(), self.colors["green"])
+        return self.colors.get(color.lower(), self.colors["black"])
 
-    def draw_arrow(self, pt1, pt2, color="green", thickness=2, head_size=10):
+    def draw_arrow(self, pt1, pt2, color="black", thickness=1, head_size=6):
         """
         Draw an arrow with a consistent arrowhead size regardless of line length.
 
         :param pt1: Start point (x, y)
         :param pt2: End point (x, y)
-        :param color: 'red' or 'green'
+        :param color: 'red' or 'black'
         :param thickness: Line thickness
         :param head_size: Length of arrowhead sides (default: 10)
         """
@@ -51,27 +51,28 @@ class TacticsDrawer:
         # Arrowhead points (two lines forming a "V")
         left = (
             int(pt2[0] - head_size * math.cos(angle - math.pi / 6)),
-            int(pt2[1] - head_size * math.sin(angle - math.pi / 6))
+            int(pt2[1] - head_size * math.sin(angle - math.pi / 6)),
         )
         right = (
             int(pt2[0] - head_size * math.cos(angle + math.pi / 6)),
-            int(pt2[1] - head_size * math.sin(angle + math.pi / 6))
+            int(pt2[1] - head_size * math.sin(angle + math.pi / 6)),
         )
 
         # Draw arrowhead "wings"
         cv2.line(self.image, pt2, left, color_bgr, thickness)
         cv2.line(self.image, pt2, right, color_bgr, thickness)
 
-    def draw_circle(self, center, radius=5, color="red", thickness=2):
+    def draw_circle(self, center, radius=5, color="red", thickness=1):
         """
         Draw a circle (not filled) at the given center.
 
         :param center: Center of the circle (x, y)
         :param radius: Radius of the circle
-        :param color: "red" or "green"
+        :param color: "red" or "black"
         :param thickness: Line thickness
         """
         cv2.circle(self.image, center, radius, self._get_color(color), thickness)
+        cv2.circle(self.image, center, radius - 4, self._get_color(color), thickness=-1)
 
     def draw_filled_circle(self, center, radius=5, color="red"):
         """
@@ -79,17 +80,17 @@ class TacticsDrawer:
 
         :param center: Center of the circle (x, y)
         :param radius: Radius of the circle
-        :param color: "red" or "green"
+        :param color: "red" or "black"
         """
         cv2.circle(self.image, center, radius, self._get_color(color), thickness=-1)
 
-    def draw_cross(self, center, size=10, color="red", thickness=2):
+    def draw_cross(self, center, size=6, color="red", thickness=1):
         """
         Draw a cross ("+") centered at the given point.
 
         :param center: Center of the cross (x, y)
         :param size: Half-length of cross arms
-        :param color: "red" or "green"
+        :param color: "red" or "black"
         :param thickness: Line thickness
         """
         x, y = center
