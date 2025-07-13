@@ -16,5 +16,3 @@ pitch.draw_cross((150, 150), size=10, color="green")
 
 pitch.save("annotated_output.jpg")
 ```
-
-![area](examples/annotated_output.jpg?raw=true)
